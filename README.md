@@ -1,5 +1,6 @@
 Ebay OAuth2 for Go
 ---
+[![Go](https://github.com/ralucas/go-ebay-oauth2/actions/workflows/go.yml/badge.svg)](https://github.com/ralucas/go-ebay-oauth2/actions/workflows/go.yml)
 
 ## Introduction
 A library for handling OAuth2 for making eBay REST requests.
@@ -48,10 +49,38 @@ opts = opts.append(WithState("my-state-token"))
 ac := client.AuthorizationCode(config, myscopes, opts...)
 ```
 
+Get the request url for application access:
+```go
+url, err := ac.GrantApplicationAccessUrl()
+```
+
+Next, in your redirect route handler, get the access token:
+```go
+token, err := ac.ExchangeAuthorizationForToken(req.redirectURI)
+// do something with the token
+```
 
 ### Client Credentials Flow
 Example:
 ```go
 myscopes := []string{"offer"}
 cc := client.ClientCredentials(myscopes)
+```
+
+Get the access token:
+
+```go
+token, err := cc.AccessToken()
+// do something with the token
+```
+
+## AccessToken
+```go
+type AccessToken struct {
+	AccessToken           string `json:"access_token"`
+	ExpiresIn             int    `json:"expires_in"`
+	RefreshToken          string `json:"refresh_token"`
+	RefreshTokenExpiresIn int    `json:"refresh_token_expires_in"`
+	TokenType             string `json:"token_type"`
+}
 ```
