@@ -12,9 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: make
-
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
