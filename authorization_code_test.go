@@ -1,3 +1,5 @@
+// +build unit
+
 package oauth2_test
 
 import (
@@ -24,7 +26,7 @@ var (
 	testCode         = "test-code"
 )
 
-func TestGrantApplicationAccessUrl(t *testing.T) {
+func TestAuthorizationCode_GrantApplicationAccessURL(t *testing.T) {
 	client := oauth2.NewClient(testBaseUrl, testClientId, testClientSecret, testRedirectUri)
 
 	t.Run("NoOptions", func(t *testing.T) {
@@ -35,7 +37,7 @@ func TestGrantApplicationAccessUrl(t *testing.T) {
 		assert.Empty(t, ac.Prompt())
 		assert.Empty(t, ac.State())
 
-		u, err := ac.GrantApplicationAccessUrl()
+		u, err := ac.GrantApplicationAccessURL()
 
 		assert.Nil(t, err, fmt.Sprintf("%v", err))
 
@@ -56,7 +58,7 @@ func TestGrantApplicationAccessUrl(t *testing.T) {
 		assert.Equal(t, ac.Prompt(), testPrompt)
 		assert.Equal(t, ac.State(), testState)
 
-		u, err := ac.GrantApplicationAccessUrl()
+		u, err := ac.GrantApplicationAccessURL()
 
 		assert.Nil(t, err, fmt.Sprintf("%v", err))
 
@@ -70,7 +72,7 @@ func TestGrantApplicationAccessUrl(t *testing.T) {
 	})
 }
 
-func TestExchangeAuthorizationCodeForToken(t *testing.T) {
+func TestAuthorizationCode_ExchangeAuthorizationCodeForToken(t *testing.T) {
 	client := oauth2.NewClient(testBaseUrl, testClientId, testClientSecret, testRedirectUri)
 	client.SetHTTPClient(&mocks.MockHTTPClient{})
 

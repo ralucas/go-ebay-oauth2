@@ -1,3 +1,5 @@
+// +build unit
+
 package oauth2_test
 
 import (
@@ -10,7 +12,7 @@ import (
 	"github.com/ralucas/go-ebay-oauth2/mocks"
 )
 
-func TestAccessToken(t *testing.T) {
+func TestClientCredentials_AccessToken(t *testing.T) {
 	client := oauth2.NewClient(testBaseUrl, testClientId, testClientSecret, testRedirectUri)
 	client.SetHTTPClient(&mocks.MockHTTPClient{})
 
