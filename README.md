@@ -1,6 +1,7 @@
 Ebay OAuth2 for Go
 ---
 [![Go](https://github.com/ralucas/go-ebay-oauth2/actions/workflows/go.yml/badge.svg)](https://github.com/ralucas/go-ebay-oauth2/actions/workflows/go.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ralucas/go-ebay-oauth2.svg)](https://pkg.go.dev/github.com/ralucas/go-ebay-oauth2)
 
 ## Introduction
 A library for handling OAuth2 for making eBay REST requests.
