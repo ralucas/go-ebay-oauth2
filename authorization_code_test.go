@@ -4,6 +4,8 @@ package oauth2_test
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"strings"
 	"testing"
@@ -160,5 +162,56 @@ func TestAuthorizationCode_ExchangeAuthorizationCodeForToken(t *testing.T) {
 
 		assert.Nil(t, token, fmt.Sprintf("recieved token %v", token))
 		assert.NotNil(t, err)
+	})
+
+	t.Run("MakesExpectedRequest", func(t *testing.T) {
+		spyHttpClient := &double.SpyHTTPClient{}
+		spyHttpClient.Reset()
+
+		client.SetHTTPClient(spyHttpClient)
+
+		ac := client.AuthorizationCode(
+			testScopes,
+		)
+
+		testURL, err := url.Parse(fmt.Sprintf("https://test.com/redirect?code=%s", testCode))
+		require.Nil(t, err)
+
+		_, err = ac.ExchangeAuthorizationForToken(testURL)
+		require.Nil(t, err)
+
+		require.Equal(t, 1, spyHttpClient.CallCount("Do"))
+
+		calls := spyHttpClient.Calls("Do")
+		call := calls[0]
+		callArgs := call.Arguments()
+		callReq := callArgs[0].(*http.Request)
+
+		reqUrl := fmt.Sprintf("%s%s", testBaseUrl, oauth2.TokenPath)
+
+		assert.Equal(t, reqUrl, callReq.URL.String())
+
+		callClientID, callClientSecret, ok := callReq.BasicAuth()
+		require.True(t, ok)
+
+		assert.Equal(t, testClientId, callClientID)
+		assert.Equal(t, testClientSecret, callClientSecret)
+
+		assert.Equal(t, "application/x-www-form-urlencoded", callReq.Header.Get("Content-Type"))
+
+		body, err := io.ReadAll(callReq.Body)
+		require.Nil(t, err)
+
+		reqBody := fmt.Sprintf(
+			"%s=%s\n%s=%s\n%s=%s",
+			oauth2.FieldGrantType,
+			"authorization_code",
+			oauth2.FieldCode,
+			testCode,
+			oauth2.FieldRedirectURI,
+			testRedirectUri,
+		)
+
+		assert.Equal(t, reqBody, string(body))
 	})
 }

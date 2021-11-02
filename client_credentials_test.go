@@ -33,6 +33,7 @@ func TestClientCredentials_AccessToken(t *testing.T) {
 
 	t.Run("MakesExpectedRequest", func(t *testing.T) {
 		spyHttpClient := &double.SpyHTTPClient{}
+		spyHttpClient.Reset()
 
 		client.SetHTTPClient(spyHttpClient)
 
