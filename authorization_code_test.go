@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	oauth2 "github.com/ralucas/go-ebay-oauth2"
-	"github.com/ralucas/go-ebay-oauth2/mocks"
+	"github.com/ralucas/go-ebay-oauth2/double"
 )
 
 var (
@@ -74,9 +74,11 @@ func TestAuthorizationCode_GrantApplicationAccessURL(t *testing.T) {
 
 func TestAuthorizationCode_ExchangeAuthorizationCodeForToken(t *testing.T) {
 	client := oauth2.NewClient(testBaseUrl, testClientId, testClientSecret, testRedirectUri)
-	client.SetHTTPClient(&mocks.MockHTTPClient{})
 
 	t.Run("RetrievesToken", func(t *testing.T) {
+		mockHttpClient := double.MockHTTPClient{}
+		client.SetHTTPClient(&mockHttpClient)
+
 		ac := client.AuthorizationCode(
 			testScopes,
 		)
@@ -91,6 +93,9 @@ func TestAuthorizationCode_ExchangeAuthorizationCodeForToken(t *testing.T) {
 	})
 
 	t.Run("RetrievesTokenWithState", func(t *testing.T) {
+		mockHttpClient := double.MockHTTPClient{}
+		client.SetHTTPClient(&mockHttpClient)
+
 		ac := client.AuthorizationCode(
 			testScopes,
 			oauth2.WithState(testState),
@@ -106,6 +111,9 @@ func TestAuthorizationCode_ExchangeAuthorizationCodeForToken(t *testing.T) {
 	})
 
 	t.Run("ErrorsOnMissingCodeFromURL", func(t *testing.T) {
+		mockHttpClient := double.MockHTTPClient{}
+		client.SetHTTPClient(&mockHttpClient)
+
 		ac := client.AuthorizationCode(
 			testScopes,
 		)
@@ -120,6 +128,9 @@ func TestAuthorizationCode_ExchangeAuthorizationCodeForToken(t *testing.T) {
 	})
 
 	t.Run("ErrorsOnUnexpectedStateFromURL", func(t *testing.T) {
+		mockHttpClient := double.MockHTTPClient{}
+		client.SetHTTPClient(&mockHttpClient)
+
 		ac := client.AuthorizationCode(
 			testScopes,
 		)
@@ -134,6 +145,9 @@ func TestAuthorizationCode_ExchangeAuthorizationCodeForToken(t *testing.T) {
 	})
 
 	t.Run("ErrorsOnMissingStateFromURL", func(t *testing.T) {
+		mockHttpClient := double.MockHTTPClient{}
+		client.SetHTTPClient(&mockHttpClient)
+
 		ac := client.AuthorizationCode(
 			testScopes,
 			oauth2.WithState(testState),

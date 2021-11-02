@@ -84,7 +84,7 @@ func (a *authorizationCodeFlow) GrantApplicationAccessURL() (*url.URL, error) {
 		return nil, fmt.Errorf("failed to parse url %+v\n", err)
 	}
 
-	requestUrl.Path = authorizePath
+	requestUrl.Path = AuthorizePath
 
 	qs := url.Values{}
 	qs.Set(FieldClientID, a.clientID)

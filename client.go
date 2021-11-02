@@ -1,9 +1,7 @@
 package oauth2
 
 import (
-	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -12,11 +10,11 @@ import (
 
 const (
 	// Content-Type used in OAuth2 requests
-	contentType = "application/x-www-form-urlencoded"
+	ContentType = "application/x-www-form-urlencoded"
 
 	// Paths
-	authorizePath = "/oauth2/authorize"
-	tokenPath     = "/identity/v1/oauth2/token"
+	AuthorizePath = "/oauth2/authorize"
+	TokenPath     = "/identity/v1/oauth2/token"
 
 	// Grant Types
 	GrantTypeAuthorizationCode = "authorization_code"
@@ -82,7 +80,6 @@ type Oauth2Client interface {
 	ClientSecret() string
 	RedirectURI() string
 	SetHTTPClient(HTTPClient)
-	GetHTTPClient() HTTPClient
 	AuthorizationCode([]string, ...authorizationCodeOption) *authorizationCodeFlow
 	ClientCredentials([]string) *clientCredentialsFlow
 }
@@ -111,11 +108,6 @@ func (o *oauth2Client) SetHTTPClient(c HTTPClient) {
 	o.httpClient = c
 }
 
-// GetHTTPClient returns the http client used by the Oauth2Client
-func (o *oauth2Client) GetHTTPClient() HTTPClient {
-	return o.httpClient
-}
-
 // BaseURL returns the base url used by the Oauth2Client
 func (o *oauth2Client) BaseURL() string {
 	return o.baseURL
@@ -136,15 +128,6 @@ func (o *oauth2Client) RedirectURI() string {
 	return o.redirectURI
 }
 
-// basicAuthorization creates the base64 encoded string used in the "Authorization" header.
-func (o *oauth2Client) basicAuthorization() string {
-	return fmt.Sprintf(
-		"Basic %s", base64.StdEncoding.EncodeToString(
-			[]byte(fmt.Sprintf("%s:%s", o.clientID, o.clientSecret)),
-		),
-	)
-}
-
 // accessToken takes a request body in io.Reader type, sends the request to the
 // oauth2 token path returning either the access token or an error.
 func (o *oauth2Client) accessToken(requestBody io.Reader) (*AccessToken, error) {
@@ -153,7 +136,7 @@ func (o *oauth2Client) accessToken(requestBody io.Reader) (*AccessToken, error) 
 		return nil, err
 	}
 
-	requestUrl.Path = tokenPath
+	requestUrl.Path = TokenPath
 
 	newReq, err := http.NewRequest(
 		http.MethodPost,
@@ -164,8 +147,9 @@ func (o *oauth2Client) accessToken(requestBody io.Reader) (*AccessToken, error) 
 		return nil, err
 	}
 
-	newReq.Header.Add("Content-Type", contentType)
-	newReq.Header.Add("Authorization", o.basicAuthorization())
+	newReq.SetBasicAuth(o.clientID, o.clientSecret)
+
+	newReq.Header.Add("Content-Type", ContentType)
 
 	res, err := o.httpClient.Do(newReq)
 	if err != nil {
