@@ -31,8 +31,8 @@ const (
 	FieldPrompt       = "prompt"
 
 	// Base urls that can be used in configuration
-	ProductionBaseUrl = "https://auth.ebay.com"
-	SandboxBaseUrl    = "https://auth.sandbox.ebay.com"
+	ProductionBaseURL = "https://api.ebay.com"
+	SandboxBaseURL    = "https://api.sandbox.ebay.com"
 )
 
 type Flow int

@@ -19,7 +19,7 @@ func TestClientCredentials_AccessToken(t *testing.T) {
 	client := oauth2.NewClient(testBaseUrl, testClientId, testClientSecret, testRedirectUri)
 
 	t.Run("SuccessfullyReturnsToken", func(t *testing.T) {
-		client.SetHTTPClient(&double.SpyHTTPClient{})
+		client.SetHTTPClient(&double.MockHTTPClient{})
 
 		cc := client.ClientCredentials(
 			testScopes,
